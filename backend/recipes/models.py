@@ -12,6 +12,7 @@ class Tag(models.Model):
     )
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -24,9 +25,9 @@ class Ingredient(models.Model):
     measurement_unit = models.CharField('Еденицы измерения', max_length=20)
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        ordering = ('name',)
 
     def __str__(self):
         return f'{self.name}, {self.measurement_unit}'
@@ -56,7 +57,7 @@ class Recipe(models.Model):
         'Время приготовления',
     )
     pub_date = models.DateTimeField(
-        verbose_name='Дата публикации', auto_now_add=True
+        verbose_name='Дата публикации', default=None
     )
 
     class Meta:
@@ -86,6 +87,11 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
+        ordering = ['-author_id']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique ingredient')]
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количество ингредиентов'
 
@@ -95,16 +101,21 @@ class Favorite(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='favorites_user',
-        verbose_name='Пользователь',
+        verbose_name='Пользователь', default=None
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         related_name='favorites_recipe',
-        verbose_name='Рецепт',
+        verbose_name='Рецепт', default=None
     )
 
     class Meta:
+        constraints = [models.UniqueConstraint(
+            fields=['user', 'recipe'],
+            name='unique_recipe_in_user_favorite'
+        )]
+        ordering = ('-author_id',)
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
 
@@ -125,6 +136,11 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
+        constraints = [models.UniqueConstraint(
+            fields=['user', 'recipe'],
+            name='unique_shopping_cart'
+        )]
+        ordering = ('-author_id',)
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзина'
 

@@ -1,8 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from rest_framework.authtoken.models import Token
-
 
 class User(AbstractUser):
     first_name = models.CharField(max_length=100)
@@ -12,7 +10,12 @@ class User(AbstractUser):
     password = models.CharField(max_length=100)
 
     class Meta:
-        verbose_name_plural = "Пользователи"
+        ordering = ['username']
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.email
 
 
 class Subscriber(models.Model):
@@ -28,11 +31,13 @@ class Subscriber(models.Model):
     )
 
     class Meta:
-        verbose_name_plural = "Подписчики"
+        ordering = ['-author_id']
+        constraints = [models.UniqueConstraint(
+            fields=['user', 'author'],
+            name='unique_subscriber'
+        )]
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
 
-
-class ProxyToken(Token):
-
-    class Meta:
-        proxy = True
-        verbose_name_plural = "Токены"
+    def __str__(self):
+        return f'{self.user} подписан на {self.author}'

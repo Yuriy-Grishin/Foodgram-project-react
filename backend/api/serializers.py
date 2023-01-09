@@ -80,21 +80,19 @@ class RecipeViewSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if request.user.is_anonymous:
             return False
-        elif Favorite.objects.filter(author=request.user, recipe=obj).exists():
+        if Favorite.objects.filter(author=request.user, recipe=obj).exists():
             return True
-        else:
-            return False
+        return False
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get("request")
         if request.user.is_anonymous:
             return False
-        elif ShoppingCart.objects.filter(
+        if ShoppingCart.objects.filter(
             author=request.user, recipe=obj
         ).exists():
             return True
-        else:
-            return False
+        return False
 
 
 class RecipeWriteSerializer(
@@ -138,7 +136,7 @@ class RecipeWriteSerializer(
         for ingredient in temp_ingredients:
             ingredient_instance = ingredient["id"]
             amount = ingredient["amount"]
-            RecipeIngredient.objects.create(
+            RecipeIngredient.objects.bulk_create(
                 recipe=recipe, ingredient=ingredient_instance, amount=amount
             )
         return recipe
@@ -163,7 +161,7 @@ class RecipeWriteSerializer(
             for ingredient in ingredients:
                 ingredient_id = ingredient["id"]
                 amount = ingredient["amount"]
-                RecipeIngredient.objects.create(
+                RecipeIngredient.objects.bulk_create(
                     recipe=instance, ingredient=ingredient_id, amount=amount
                 )
             instance.save()
