@@ -141,6 +141,15 @@ class RecipeWriteSerializer(
             )
         return recipe
 
+    #     recipe.tags.set(tags)
+    #     ingredients = [RecipeIngredient(ingredient=ingredient['id'],
+    #     recipe=recipe, amount=ingredients['amount'])]
+    #     RecipeIngredient.objects.bulk_create(ingredients)
+    #     return recipe
+
+    # Я не понимаю,что требуется, и как должно быть,
+    # такого не было в теории.Так не получается.
+
     def update(self, instance, validated_data):
         instance.name = validated_data.get("name", instance.name)
         instance.image = validated_data.get("image", instance.image)

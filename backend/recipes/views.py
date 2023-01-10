@@ -1,12 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.http import FileResponse
-from django.db import models
 
 from rest_framework import status
 from rest_framework.response import Response
 
-from .models import RecipeIngredient, ShoppingCart
+from .models import ShoppingCart
 
 
 @login_required
@@ -15,8 +14,7 @@ def shopping_cart(request, pk):
         instances = ShoppingCart.objects.filter(author_id=pk)
         shopping_list = []
         for instance in instances:
-            recipe_ingredients = models.ManyToManyField(
-                RecipeIngredient, related_name='recipe')
+            recipe_ingredients = instance.recipe.ingredient_to_recipe.all()
             for ingredient in recipe_ingredients:
                 shopping_list.append(
                     f"{ingredient.recipe}: {ingredient.ingredient.name}"
