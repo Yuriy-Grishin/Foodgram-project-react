@@ -87,7 +87,7 @@ class RecipeIngredient(models.Model):
     )
 
     class Meta:
-        ordering = ['-author_id']
+        ordering = ['-ingredient']
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
@@ -115,7 +115,7 @@ class Favorite(models.Model):
             fields=['user', 'recipe'],
             name='unique_recipe_in_user_favorite'
         )]
-        ordering = ('-author_id',)
+        ordering = ('-recipe',)
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
 
@@ -140,7 +140,7 @@ class ShoppingCart(models.Model):
             fields=['user', 'recipe'],
             name='unique_shopping_cart'
         )]
-        ordering = ('-author_id',)
+        ordering = ('-recipe',)
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзина'
 

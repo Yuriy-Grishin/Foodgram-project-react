@@ -31,7 +31,7 @@ class Subscriber(models.Model):
     )
 
     class Meta:
-        ordering = ['-author_id']
+        ordering = ['-id']
         constraints = [models.UniqueConstraint(
             fields=['user', 'author'],
             name='unique_subscriber'
