@@ -96,6 +96,7 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     pagination_class = None
     serializer_class = TagSerializer
+    search_fields = ('name',)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
@@ -104,6 +105,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     pagination_class = None
     filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientSearchFilter
+    search_fields = ('name',)
 
 
 class RecipeViewSet(ModelViewSet):
@@ -112,6 +114,7 @@ class RecipeViewSet(ModelViewSet):
     pagination_class = SixPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeSearchFilter
+    search_fields = ('name',)
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):

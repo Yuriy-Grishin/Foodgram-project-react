@@ -136,7 +136,7 @@ class RecipeWriteSerializer(
         for ingredient in temp_ingredients:
             ingredient_instance = ingredient["id"]
             amount = ingredient["amount"]
-            RecipeIngredient.objects.bulk_create(
+            RecipeIngredient.objects.create(
                 recipe=recipe, ingredient=ingredient_instance, amount=amount
             )
         return recipe
@@ -170,7 +170,7 @@ class RecipeWriteSerializer(
             for ingredient in ingredients:
                 ingredient_id = ingredient["id"]
                 amount = ingredient["amount"]
-                RecipeIngredient.objects.bulk_create(
+                RecipeIngredient.objects.create(
                     recipe=instance, ingredient=ingredient_id, amount=amount
                 )
             instance.save()
