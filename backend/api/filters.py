@@ -2,20 +2,19 @@ from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework.filters import (
     AllValuesMultipleFilter,
     BooleanFilter,
-    CharFilter,
     ModelChoiceFilter
 )
 
-from recipes.models import Ingredient, Recipe
+from recipes.models import Recipe
 from users.models import User
 
 
-class IngredientSearchFilter(FilterSet):
-    name = CharFilter(lookup_expr="istartswith")
+# class IngredientSearchFilter(SearchFilter):
+#     name = CharFilter(lookup_expr="istartswith")
 
-    class Meta:
-        model = Ingredient
-        fields = ("name",)
+#     class Meta:
+#         model = Ingredient
+#         fields = ("name",)
 
 
 class RecipeSearchFilter(FilterSet):

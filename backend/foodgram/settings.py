@@ -16,7 +16,7 @@ MEDIA_ROOT = "/app/backend_media/"
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='secret_key')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "django_filters",
     "users.apps.UsersConfig",
     "recipes.apps.RecipesConfig",
+    "django.core.management",
 ]
 
 MIDDLEWARE = [
@@ -152,4 +153,4 @@ REST_FRAMEWORK = {
     ["rest_framework.authentication.TokenAuthentication", ],
 }
 
-CSRF_TRUSTED_ORIGINS = ['http://yuriygrishin.ddns.net', 'http://localhost', 'http://51.250.9.68']
+CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*', 'http://127.0.0.1:8000/auth/login/', 'http://127.0.0.1:8000', 'http://localhost', 'http://51.250.9.68']

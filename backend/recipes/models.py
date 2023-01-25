@@ -145,4 +145,4 @@ class ShoppingCart(models.Model):
         verbose_name_plural = 'Корзина'
 
     def __str__(self):
-        return self.recipe, self.user
+        return f'{self.user} -> {self.recipe}'
