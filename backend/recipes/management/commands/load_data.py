@@ -1,28 +1,32 @@
-from django.core.management import BaseCommand
+import csv
+import logging
 
-from csv import DictReader
+from django.conf import settings
+from django.core.management.base import BaseCommand
 
 from recipes.models import Ingredient
 
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+
 
 class Command(BaseCommand):
-    help = "Loads data from ingredients.csv"
-
     def handle(self, *args, **options):
-        if Ingredient.objects.exists():
-            print("ingredients data already loaded...exiting.")
-            return
-        print("Loading ingredients data")
-        try:
-            ingredients_dict = DictReader(open("../data/ingredients.csv"))
-        except Exception:
-            FileNotFoundError("Can't open file")
-        try:
-            for row in ingredients_dict:
-                ing = Ingredient(
-                    name=row["name"],
-                    measurement_unit=row["measurement_unit"]
-                )
-                ing.save()
-        except Exception:
-            AttributeError("Can't save ingredient")
+        Ingredient.objects.all().delete()
+        logging.info(' Модель Ingredient стерта.')
+        data_path = settings.BASE_DIR
+        with open(
+            f'{data_path}/data/ingredients.csv',
+            'r',
+            encoding='utf-8'
+        ) as file:
+            reader = csv.reader(file)
+            counter = 0
+            for row in reader:
+                if counter % 100 == 0:
+                    logging.info(f' Добавлен  {row[0]}')
+                ingr = Ingredient.objects.create(name=row[0], measurement_unit=row[1])
+                ingr.save()
+                counter += 1
+        logging.info(
+            f' Добавлено - {counter} строк'
+        )

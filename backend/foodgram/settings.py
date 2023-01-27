@@ -16,7 +16,7 @@ MEDIA_ROOT = "/app/backend_media/"
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='secret_key')
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -81,8 +81,7 @@ else:
             'NAME': os.getenv('DB_NAME'),
             'USER': os.getenv('POSTGRES_USER'),
             'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
-            'PORT': os.getenv('DB_PORT', default=5432)
+            'PORT': os.getenv('DB_PORT')
         }
     }
 
@@ -153,4 +152,4 @@ REST_FRAMEWORK = {
     ["rest_framework.authentication.TokenAuthentication", ],
 }
 
-CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*', 'http://127.0.0.1:8000/auth/login/', 'http://127.0.0.1:8000', 'http://localhost', 'http://51.250.9.68']
+CSRF_TRUSTED_ORIGINS = ['localhost', 'http://*', 'https://*', 'http://127.0.0.1:8000/auth/login/', 'http://127.0.0.1:8000', 'http://localhost', 'http://51.250.9.68']
