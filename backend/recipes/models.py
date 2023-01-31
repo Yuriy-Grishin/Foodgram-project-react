@@ -57,7 +57,7 @@ class Recipe(models.Model):
         'Время приготовления',
     )
     pub_date = models.DateTimeField(
-        verbose_name='Дата публикации', default=None
+        verbose_name='Дата публикации', auto_now_add=True
     )
 
     class Meta:

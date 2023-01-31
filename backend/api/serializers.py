@@ -177,6 +177,7 @@ class RecipeWriteSerializer(
         return instance
 
     def to_representation(self, instance):
+        raise Exception(instance, self.context)
         return RecipeViewSerializer(instance, context=self.context).data
 
 
