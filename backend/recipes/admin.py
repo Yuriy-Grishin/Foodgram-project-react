@@ -52,13 +52,13 @@ class RecipeAdminIngredient(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'recipe')
-    list_display_links = ('user',)
-    search_fields = ('user',)
+    list_display = ('id', 'author', 'recipe')
+    list_display_links = ('author',)
+    search_fields = ('author',)
 
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'recipe')
-    list_display_links = ('user',)
-    search_fields = ('user',)
+    list_display = ('id', 'author', 'recipe')
+    list_display_links = ('author',)
+    search_fields = ('author',)

@@ -1,9 +1,10 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction, IntegrityError
-from django.http import HttpResponse
+
 from django_filters.rest_framework import DjangoFilterBackend
 
 from djoser.views import UserViewSet as DjoserUserViewSet
+from django.db.models import Sum
 
 from rest_framework import status
 from rest_framework.decorators import action
@@ -33,6 +34,7 @@ from recipes.models import (
     Tag
 )
 from users.models import Subscriber, User
+from .utils2 import download_file_response
 
 
 class UserViewSet(DjoserUserViewSet):
@@ -183,29 +185,40 @@ class RecipeViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @action(
-        detail=False,
-        methods=[
-            "GET",
-        ],
-        permission_classes=[IsAuthenticated],
-    )
+    # @action(
+    #     detail=False,
+    #     methods=[
+    #         "GET",
+    #     ],
+    #     permission_classes=[IsAuthenticated],
+    # )
+    # def download_shopping_cart(self, request):
+    #     instances = ShoppingCart.objects.filter(author=request.user)
+    #     shopping_list = []
+    #     for instance in instances:
+    #         recipe = Recipe.objects.get(name=instance.recipe)
+    #         recipe_ingredients = RecipeIngredient.objects.filter(recipe=recipe)
+    #         for ingredient in recipe_ingredients:
+    #             shopping_list.append(
+    #                 f"{ingredient.recipe}: {ingredient.ingredient.name}"
+    #                 f" - {ingredient.amount}\n"
+    #             )
+    #     f = open("shopping_cart.txt", "w")
+    #     for shopping in shopping_list:
+    #         f.write(shopping)
+    #     f.close()
+    #     return HttpResponse(shopping_list, content_type="text/plain")
+
+    @action(detail=False, methods=["GET"],
+            permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
-        instances = ShoppingCart.objects.filter(author=request.user)
-        shopping_list = []
-        for instance in instances:
-            recipe = Recipe.objects.get(name=instance.recipe)
-            recipe_ingredients = RecipeIngredient.objects.filter(recipe=recipe)
-            for ingredient in recipe_ingredients:
-                shopping_list.append(
-                    f"{ingredient.recipe}: {ingredient.ingredient.name}"
-                    f" - {ingredient.amount}\n"
-                )
-        f = open("shopping_cart.txt", "w")
-        for shopping in shopping_list:
-            f.write(shopping)
-        f.close()
-        return HttpResponse(shopping_list, content_type="text/plain")
+        ingredients_list = RecipeIngredient.objects.filter(
+            recipe__shopping_cart__author=request.user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(amount=Sum('amount'))
+        return download_file_response(ingredients_list)
 
     @action(
         detail=True,
