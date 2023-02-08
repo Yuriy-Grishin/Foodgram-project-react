@@ -185,30 +185,6 @@ class RecipeViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    # @action(
-    #     detail=False,
-    #     methods=[
-    #         "GET",
-    #     ],
-    #     permission_classes=[IsAuthenticated],
-    # )
-    # def download_shopping_cart(self, request):
-    #     instances = ShoppingCart.objects.filter(author=request.user)
-    #     shopping_list = []
-    #     for instance in instances:
-    #         recipe = Recipe.objects.get(name=instance.recipe)
-    #         recipe_ingredients = RecipeIngredient.objects.filter(recipe=recipe)
-    #         for ingredient in recipe_ingredients:
-    #             shopping_list.append(
-    #                 f"{ingredient.recipe}: {ingredient.ingredient.name}"
-    #                 f" - {ingredient.amount}\n"
-    #             )
-    #     f = open("shopping_cart.txt", "w")
-    #     for shopping in shopping_list:
-    #         f.write(shopping)
-    #     f.close()
-    #     return HttpResponse(shopping_list, content_type="text/plain")
-
     @action(detail=False, methods=["GET"],
             permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
