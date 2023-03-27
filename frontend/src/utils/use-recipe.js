@@ -5,9 +5,9 @@ export default function useRecipe () {
   const [ recipe, setRecipe ] = useState({})
 
   const handleLike = ({ id, toLike = 1 }) => {
-    const method = toLike ? api.addToFavorites.bind(api) : api.removeFromFavorites.bind(api)
+    const method = toLike ? api.addToLikedRecipe.bind(api) : api.removeFromLikedRecipe.bind(api)
     method({ id }).then(res => {
-      const recipeUpdated = { ...recipe, is_favorited: Number(toLike) }
+      const recipeUpdated = { ...recipe, is_likedrecipe: Number(toLike) }
       setRecipe(recipeUpdated)
     })
     .catch(err => {
@@ -21,7 +21,7 @@ export default function useRecipe () {
   const handleAddToCart = ({ id, toAdd = 1, callback }) => {
     const method = toAdd ? api.addToOrders.bind(api) : api.removeFromOrders.bind(api)
     method({ id }).then(res => {
-      const recipeUpdated = { ...recipe, is_in_shopping_cart: Number(toAdd) }
+      const recipeUpdated = { ...recipe, is_in_grocerylist: Number(toAdd) }
       setRecipe(recipeUpdated)
       callback && callback(toAdd)
     })

@@ -1,45 +1,37 @@
-from django_filters.rest_framework import FilterSet
-from django_filters.rest_framework.filters import (
-    AllValuesMultipleFilter,
-    BooleanFilter,
-    ModelChoiceFilter
-)
+from django_filters.rest_framework import FilterSet, filters
+from recipes.models import Product, Recipe, Tag
 
-from recipes.models import Recipe
-from users.models import User
+class ProductFilter(FilterSet):
+    """Выбираем продукты по спецификатору начала названия без учета регистра"""
+    name = filters.CharFilter(lookup_expr='istartswith')
 
-
-# class IngredientSearchFilter(SearchFilter):
-#     name = CharFilter(lookup_expr="istartswith")
-
-#     class Meta:
-#         model = Ingredient
-#         fields = ("name",)
+    class Meta:
+        model = Product
+        fields = ('name',)
 
 
-class RecipeSearchFilter(FilterSet):
-    is_favorited = BooleanFilter(method="filter_is_favorited")
-    is_in_shopping_cart = BooleanFilter(method="filter_is_in_shopping_cart")
-    tags = AllValuesMultipleFilter(field_name="tags__slug")
-    author = ModelChoiceFilter(queryset=User.objects.all())
-
-    def filter_is_favorited(self, queryset, name, value):
-        user = self.request.user
-        if value and user.is_authenticated:
-            return queryset.filter(favorite__author=user)
-        return queryset
-
-    def filter_is_in_shopping_cart(self, queryset, name, value):
-        user = self.request.user
-        if value and user.is_authenticated:
-            return queryset.filter(shopping_cart__author=user)
-        return queryset
+class RecipeFilter(FilterSet):
+    """Выбираем рецепты по полям"""
+    tags = filters.ModelMultipleChoiceFilter(field_name='tags__slug',
+                                             to_field_name='slug',
+                                             queryset=Tag.objects.all())
+    is_likedrecipe = filters.BooleanFilter(
+        method='filter_is_likedrecipe')
+    is_in_grocerylist = filters.BooleanFilter(
+        method='is_in_grocerylist_filter')
 
     class Meta:
         model = Recipe
-        fields = [
-            "tags__slug",
-            "author",
-            "is_favorited",
-            "is_in_shopping_cart"
-        ]
+        fields = ('tags', 'author',)
+    """В списке избранных"""
+    def filter_is_likedrecipe(self, queryset, name, data):
+        user = self.request.user
+        if data and user.is_authenticated:
+            return queryset.filter(likedrecipe__user=user)
+        return queryset
+    """В списке покупок"""
+    def is_in_grocerylist_filter(self, queryset, name, data):
+        user = self.request.user
+        if data and user.is_authenticated:
+            return queryset.filter(grocerylist_recipe__user=user)
+        return queryset

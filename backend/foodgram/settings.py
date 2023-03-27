@@ -66,6 +66,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
+
 if DEBUG:
 
     DATABASES = {
@@ -76,14 +77,17 @@ if DEBUG:
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('POSTGRES_USER'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-            'PORT': os.getenv('DB_PORT')
-        }
+    'default': {
+        'ENGINE': os.getenv('ENGINE',
+                            default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT')
     }
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -120,19 +124,13 @@ STATIC_URL = "/static_backend/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-RECIPE_AMOUNT = 6
-
 STATICFILES_DIRS = [os.path.join(BASE_DIR), "static"]
 
 AUTH_USER_MODEL = "users.User"
 
 DJOSER = {
     "LOGIN_FIELD": "email",
-    "SERIALIZERS": {
-        "user_create": "users.serializers.UserCreateSerializer",
-        "user": "users.serializers.UserSerializer",
-        "current_user": "users.serializers.UserSerializer",
-    },
+    
     "PERMISSIONS": {
         "user": ["rest_framework.permissions.IsAuthenticated"],
         "user_list": ["rest_framework.permissions.AllowAny"],
@@ -147,9 +145,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS":
     "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE":
-    10,
+    6,
     "DEFAULT_AUTHENTICATION_CLASSES":
     ["rest_framework.authentication.TokenAuthentication", ],
 }
 
-CSRF_TRUSTED_ORIGINS = ['localhost', 'http://*', 'https://*', 'http://127.0.0.1:8000/auth/login/', 'http://127.0.0.1:8000', 'http://localhost', 'http://51.250.9.68']
+GROCERYLIST = 'grocerylist.txt'

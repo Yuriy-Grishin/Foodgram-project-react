@@ -24,7 +24,7 @@ import PurchaseList from './purchase-list'
 import Subscription from './subscription'
 import SubscriptionList from './subscription-list'
 import FileInput from './file-input'
-import IngredientsSearch from './ingredients-search'
+import ProductsSearch from './products-search'
 
 export {
   Header,
@@ -53,5 +53,5 @@ export {
   Subscription,
   SubscriptionList,
   FileInput,
-  IngredientsSearch
+  ProductsSearch
 }

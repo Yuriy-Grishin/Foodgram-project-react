@@ -1,64 +1,36 @@
 from django.contrib import admin
 
-from recipes.models import (
-    Ingredient, Recipe, Tag, RecipeIngredient, ShoppingCart, Favorite
-)
+from recipes.models import Product, Tag, Recipe, RecipeProduct, LikedRecipe, GroceryList
 
 
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug', 'color')
-    list_editable = ('color',)
-    list_display_links = ('name',)
-    search_fields = ('name',)
-
-
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'measurement_unit')
+admin.site.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'measurement_unit',)
     list_filter = ('name', )
-    list_display_links = ('name',)
     search_fields = ('name', )
-    empty_value_display = '-пусто-'
 
 
-class RecipeIngredientInline(admin.TabularInline):
-    model = Recipe.ingredients.through
-    extra = 1
-    min_num = 1
-
-
-@admin.register(Recipe)
+admin.site.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'author', 'text',
-                    'cooking_time', 'pub_date',)
-    search_fields = ('name', )
-    ordering = ('-pub_date',)
-    inline = (RecipeIngredientInline, )
-    list_filter = ('author', 'name', 'tags')
-    empty_value_display = '-empty-'
-    readonly_fields = ['favorited_count']
-
-    def favorited_count(self, obj):
-        return obj.favorites_recipe.count()
+    list_display = ('name', 'author',)
+    list_filter = ('name', 'author', 'tags',)
 
 
-@admin.register(RecipeIngredient)
-class RecipeAdminIngredient(admin.ModelAdmin):
-    list_display = ('id', 'recipe', 'ingredient', 'amount')
-    list_display_links = ('recipe',)
-    search_fields = ('recipe',)
+admin.site.register(RecipeProduct)
+class RecipeProductAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'product', 'amount',)
 
 
-@admin.register(Favorite)
-class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'author', 'recipe')
-    list_display_links = ('author',)
-    search_fields = ('author',)
+admin.site.register(LikedRecipe)
+class LikedRecipeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe',)
 
 
-@admin.register(ShoppingCart)
-class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('id', 'author', 'recipe')
-    list_display_links = ('author',)
-    search_fields = ('author',)
+admin.site.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+
+
+admin.site.register(GroceryList)
+class GroceryListAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe',)

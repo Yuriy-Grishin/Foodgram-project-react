@@ -21,7 +21,7 @@ class Api {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = "shopping-list";
+          a.download = "grocery-list";
           document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
           a.click();    
           a.remove();  //afterwards we remove the element again 
@@ -106,8 +106,8 @@ class Api {
   getRecipes ({
     page = 1,
     limit = 6,
-    is_favorited = 0,
-    is_in_shopping_cart = 0,
+    is_likedrecipe = 0,
+    is_in_grocerylist = 0,
     author,
     tags
   } = {}) {
@@ -115,7 +115,7 @@ class Api {
       const authorization = token ? { 'authorization': `Token ${token}` } : {}
       const tagsString = tags ? tags.filter(tag => tag.value).map(tag => `&tags=${tag.slug}`).join('') : ''
       return fetch(
-        `/api/recipes/?page=${page}&limit=${limit}${author ? `&author=${author}` : ''}${is_favorited ? `&is_favorited=${is_favorited}` : ''}${is_in_shopping_cart ? `&is_in_shopping_cart=${is_in_shopping_cart}` : ''}${tagsString}`,
+        `/api/recipes/?page=${page}&limit=${limit}${author ? `&author=${author}` : ''}${is_likedrecipe ? `&is_likedrecipe=${is_likedrecipe}` : ''}${is_in_grocerylist ? `&is_in_grocerylist=${is_in_grocerylist}` : ''}${tagsString}`,
         {
           method: 'GET',
           headers: {
@@ -149,7 +149,7 @@ class Api {
     tags = [],
     cooking_time = 0,
     text = '',
-    ingredients = []
+    products = []
   }) {
     const token = localStorage.getItem('token')
     return fetch(
@@ -166,7 +166,7 @@ class Api {
           tags,
           cooking_time,
           text,
-          ingredients
+          products
         })
       }
     ).then(this.checkResponse)
@@ -179,7 +179,7 @@ class Api {
     tags,
     cooking_time,
     text,
-    ingredients
+    products
   }, wasImageUpdated) { // image was changed
     const token = localStorage.getItem('token')
     return fetch(
@@ -197,16 +197,16 @@ class Api {
           tags,
           cooking_time: Number(cooking_time),
           text,
-          ingredients
+          products
         })
       }
     ).then(this.checkResponse)
   }
 
-  addToFavorites ({ id }) {
+  addToLikedRecipe ({ id }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${id}/favorite/`,
+      `/api/recipes/${id}/likedrecipe/`,
       {
         method: 'POST',
         headers: {
@@ -217,10 +217,10 @@ class Api {
     ).then(this.checkResponse)
   }
 
-  removeFromFavorites ({ id }) {
+  removeFromLikedRecipe ({ id }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${id}/favorite/`,
+      `/api/recipes/${id}/likedrecipe/`,
       {
         method: 'DELETE',
         headers: {
@@ -314,11 +314,11 @@ class Api {
     ).then(this.checkResponse)
   }
 
-  // ingredients
-  getIngredients ({ name }) {
+  // products
+  getProducts ({ name }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/ingredients/?name=${name}`,
+      `/api/products/?name=${name}`,
       {
         method: 'GET',
         headers: {
@@ -346,7 +346,7 @@ class Api {
   addToOrders ({ id }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${id}/shopping_cart/`,
+      `/api/recipes/${id}/grocerylist/`,
       {
         method: 'POST',
         headers: {
@@ -360,7 +360,7 @@ class Api {
   removeFromOrders ({ id }) {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/${id}/shopping_cart/`,
+      `/api/recipes/${id}/grocerylist/`,
       {
         method: 'DELETE',
         headers: {
@@ -388,7 +388,7 @@ class Api {
   downloadFile () {
     const token = localStorage.getItem('token')
     return fetch(
-      `/api/recipes/download_shopping_cart/`,
+      `/api/recipes/download_grocerylist/`,
       {
         method: 'GET',
         headers: {

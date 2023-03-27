@@ -1,6 +1,6 @@
 from rest_framework.pagination import PageNumberPagination
 
 
-class SixPagination(PageNumberPagination):
-    page_size = 6
+class LimitPagination(PageNumberPagination):
+    """Позволяет пользователю устанавливать размер страницы под каждый запрос"""
     page_size_query_param = "limit"

@@ -3,11 +3,13 @@ from django.db import models
 
 
 class User(AbstractUser):
-    first_name = models.CharField(max_length=100)
-    username = models.CharField(max_length=100, unique=True)
-    last_name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=254, unique=True)
-    password = models.CharField(max_length=100)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username','first_name','last_name']
+    username = models.CharField(max_length=40, unique=True)
+    first_name = models.CharField(max_length=40)
+    last_name = models.CharField(max_length=40)
+    email = models.EmailField(max_length=40, unique=True)
+    password = models.CharField(max_length=40)
 
     class Meta:
         ordering = ['username']
@@ -15,29 +17,26 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return self.email
+        return self.username
 
 
-class Subscriber(models.Model):
+class Subscriptions(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="follower"
+        verbose_name='Кто подписался'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="following"
+        related_name='subscribed',
+        verbose_name='На кого оформлена подписка'
     )
 
     class Meta:
-        ordering = ['-id']
-        constraints = [models.UniqueConstraint(
-            fields=['user', 'author'],
-            name='unique_subscriber'
-        )]
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
+        ordering = ['user']
+        verbose_name = 'Подписка на автора блюда'
+        verbose_name_plural = 'Подписки на авторов блюд'
 
     def __str__(self):
-        return f'{self.user} подписан на {self.author}'
+        return 'Пользователем оформлена подписка на автора блюда'

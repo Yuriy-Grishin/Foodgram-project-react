@@ -1,4 +1,4 @@
-import { Container, IngredientsSearch, FileInput, Input, Title, CheckboxGroup, Main, Form, Button, Checkbox, Textarea } from '../../components'
+import { Container, ProductsSearch, FileInput, Input, Title, CheckboxGroup, Main, Form, Button, Checkbox, Textarea } from '../../components'
 import styles from './styles.module.css'
 import api from '../../api'
 import { useEffect, useState } from 'react'
@@ -10,14 +10,14 @@ const RecipeEdit = ({ onItemDelete }) => {
   const { value, handleChange, setValue } = useTags()
   const [ recipeName, setRecipeName ] = useState('')
 
-  const [ ingredientValue, setIngredientValue ] = useState({
+  const [ productValue, setProductValue ] = useState({
     name: '',
     id: null,
     amount: '',
     measurement_unit: ''
   })
 
-  const [ recipeIngredients, setRecipeIngredients ] = useState([])
+  const [ recipeProducts, setRecipeProducts ] = useState([])
   const [ recipeText, setRecipeText ] = useState('')
   const [ recipeTime, setRecipeTime ] = useState(0)
   const [ recipeFile, setRecipeFile ] = useState(null)
@@ -26,21 +26,21 @@ const RecipeEdit = ({ onItemDelete }) => {
     setRecipeFileWasManuallyChanged
   ] = useState(false)
 
-  const [ ingredients, setIngredients ] = useState([])
-  const [ showIngredients, setShowIngredients ] = useState(false)
+  const [ products, setProducts ] = useState([])
+  const [ showProducts, setShowProducts ] = useState(false)
   const [ loading, setLoading ] = useState(true)
   const history = useHistory()
 
   useEffect(_ => {
-    if (ingredientValue.name === '') {
-      return setIngredients([])
+    if (productValue.name === '') {
+      return setProducts([])
     }
     api
-      .getIngredients({ name: ingredientValue.name })
-      .then(ingredients => {
-        setIngredients(ingredients)
+      .getProducts({ name: productValue.name })
+      .then(products => {
+        setProducts(products)
       })
-  }, [ingredientValue.name])
+  }, [productValue.name])
 
   useEffect(_ => {
     api.getTags()
@@ -60,14 +60,14 @@ const RecipeEdit = ({ onItemDelete }) => {
         tags,
         cooking_time,
         name,
-        ingredients,
+        products,
         text
       } = res
       setRecipeText(text)
       setRecipeName(name)
       setRecipeTime(cooking_time)
       setRecipeFile(image)
-      setRecipeIngredients(ingredients)
+      setRecipeProducts(products)
 
 
       const tagsValueUpdated = value.map(item => {
@@ -82,9 +82,9 @@ const RecipeEdit = ({ onItemDelete }) => {
     })
   }, [value])
 
-  const handleIngredientAutofill = ({ id, name, measurement_unit }) => {
-    setIngredientValue({
-      ...ingredientValue,
+  const handleProductAutofill = ({ id, name, measurement_unit }) => {
+    setProductValue({
+      ...productValue,
       id,
       name,
       measurement_unit
@@ -94,7 +94,7 @@ const RecipeEdit = ({ onItemDelete }) => {
   const checkIfDisabled = () => {
     return recipeText === '' ||
     recipeName === '' ||
-    recipeIngredients.length === 0 ||
+    recipeProducts.length === 0 ||
     value.filter(item => item.value).length === 0 ||
     recipeTime === '' ||
     recipeFile === '' ||
@@ -116,7 +116,7 @@ const RecipeEdit = ({ onItemDelete }) => {
           const data = {
             text: recipeText,
             name: recipeName,
-            ingredients: recipeIngredients.map(item => ({
+            products: recipeProducts.map(item => ({
               id: item.id,
               amount: item.amount
             })),
@@ -131,13 +131,13 @@ const RecipeEdit = ({ onItemDelete }) => {
               history.push(`/recipes/${id}`)
             })
             .catch(err => {
-              const { non_field_errors, ingredients, cooking_time } = err
-              console.log({  ingredients })
+              const { non_field_errors, products, cooking_time } = err
+              console.log({  products })
               if (non_field_errors) {
                 return alert(non_field_errors.join(', '))
               }
-              if (ingredients) {
-                return alert(`Ингредиенты: ${ingredients.filter(item => Object.keys(item).length).map(item => {
+              if (products) {
+                return alert(`Ингредиенты: ${products.filter(item => Object.keys(item).length).map(item => {
                   const error = item[Object.keys(item)[0]]
                   return error && error.join(' ,')
                 })[0]}`)
@@ -169,72 +169,72 @@ const RecipeEdit = ({ onItemDelete }) => {
           checkboxClassName={styles.checkboxGroupItem}
           handleChange={handleChange}
         />
-        <div className={styles.ingredients}>
-          <div className={styles.ingredientsInputs}>
+        <div className={styles.products}>
+          <div className={styles.productsInputs}>
             <Input
               label='Ингредиенты'
-              className={styles.ingredientsNameInput}
-              inputClassName={styles.ingredientsInput}
-              labelClassName={styles.ingredientsLabel}
+              className={styles.productsNameInput}
+              inputClassName={styles.productsInput}
+              labelClassName={styles.productsLabel}
               onChange={e => {
                 const value = e.target.value
-                setIngredientValue({
-                  ...ingredientValue,
+                setProductValue({
+                  ...productValue,
                   name: value
                 })
               }}
               onFocus={_ => {
-                setShowIngredients(true)
+                setShowProducts(true)
               }}
-              value={ingredientValue.name}
+              value={productValue.name}
             />
-            <div className={styles.ingredientsAmountInputContainer}>
+            <div className={styles.productsAmountInputContainer}>
               <Input
-                className={styles.ingredientsAmountInput}
-                inputClassName={styles.ingredientsAmountValue}
+                className={styles.productsAmountInput}
+                inputClassName={styles.productsAmountValue}
                 onChange={e => {
                   const value = e.target.value
-                  setIngredientValue({
-                    ...ingredientValue,
+                  setProductValue({
+                    ...productValue,
                     amount: value
                   })
                 }}
-                value={ingredientValue.amount}
+                value={productValue.amount}
               />
-              {ingredientValue.measurement_unit !== '' && <div className={styles.measurementUnit}>{ingredientValue.measurement_unit}</div>}
+              {productValue.measurement_unit !== '' && <div className={styles.measurementUnit}>{productValue.measurement_unit}</div>}
             </div>
-            {showIngredients && ingredients.length > 0 && <IngredientsSearch
-              ingredients={ingredients}
+            {showProducts && products.length > 0 && <ProductsSearch
+              products={products}
               onClick={({ id, name, measurement_unit }) => {
-                handleIngredientAutofill({ id, name, measurement_unit })
-                setIngredients([])
-                setShowIngredients(false)
+                handleProductAutofill({ id, name, measurement_unit })
+                setProducts([])
+                setShowProducts(false)
               }}
             />}
           </div>
-          <div className={styles.ingredientsAdded}>
-            {recipeIngredients.map(item => {
+          <div className={styles.productsAdded}>
+            {recipeProducts.map(item => {
               return <div
-                className={styles.ingredientsAddedItem}
+                className={styles.productsAddedItem}
               >
-                <span className={styles.ingredientsAddedItemTitle}>{item.name}</span> <span>-</span> <span>{item.amount}{item.measurement_unit}</span> <span
-                  className={styles.ingredientsAddedItemRemove}
+                <span className={styles.productsAddedItemTitle}>{item.name}</span> <span>-</span> <span>{item.amount}{item.measurement_unit}</span> <span
+                  className={styles.productsAddedItemRemove}
                   onClick={_ => {
-                    const recipeIngredientsUpdated = recipeIngredients.filter(ingredient => {
-                      return ingredient.id !== item.id
+                    const recipeProductsUpdated = recipeProducts.filter(product => {
+                      return product.id !== item.id
                     })
-                    setRecipeIngredients(recipeIngredientsUpdated)
+                    setRecipeProducts(recipeProductsUpdated)
                   }}
                 >Удалить</span>
               </div>
             })}
           </div>
           <div
-            className={styles.ingredientAdd}
+            className={styles.productAdd}
             onClick={_ => {
-              if (ingredientValue.amount === '' || ingredientValue.name === '') { return }
-              setRecipeIngredients([...recipeIngredients, ingredientValue])
-              setIngredientValue({
+              if (productValue.amount === '' || productValue.name === '') { return }
+              setRecipeProducts([...recipeProducts, productValue])
+              setProductValue({
                 name: '',
                 id: null,
                 amount: '',
@@ -248,9 +248,9 @@ const RecipeEdit = ({ onItemDelete }) => {
         <div className={styles.cookingTime}>
           <Input
             label='Время приготовления'
-            className={styles.ingredientsTimeInput}
+            className={styles.productsTimeInput}
             labelClassName={styles.cookingTimeLabel}
-            inputClassName={styles.ingredientsTimeValue}
+            inputClassName={styles.productsTimeValue}
             onChange={e => {
               const value = e.target.value
               setRecipeTime(value)

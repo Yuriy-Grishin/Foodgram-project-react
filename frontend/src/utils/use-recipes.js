@@ -9,11 +9,11 @@ export default function useRecipes () {
   const { value: tagsValue, handleChange: handleTagsChange, setValue: setTagsValue } = useTags()
 
   const handleLike = ({ id, toLike = true }) => {
-    const method = toLike ? api.addToFavorites.bind(api) : api.removeFromFavorites.bind(api)
+    const method = toLike ? api.addToLikedRecipe.bind(api) : api.removeFromLikedRecipe.bind(api)
     method({ id }).then(res => {
       const recipesUpdated = recipes.map(recipe => {
         if (recipe.id === id) {
-          recipe.is_favorited = toLike
+          recipe.is_likedrecipe = toLike
         }
         return recipe
       })
@@ -32,7 +32,7 @@ export default function useRecipes () {
     method({ id }).then(res => {
       const recipesUpdated = recipes.map(recipe => {
         if (recipe.id === id) {
-          recipe.is_in_shopping_cart = toAdd
+          recipe.is_in_grocerylist = toAdd
         }
         return recipe
       })

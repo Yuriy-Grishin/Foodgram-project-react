@@ -2,7 +2,7 @@ import { Container, Main, Button, TagsContainer, Icons, LinkComponent } from '..
 import { UserContext, AuthContext } from '../../contexts'
 import { useContext, useState, useEffect } from 'react'
 import styles from './styles.module.css'
-import Ingredients from './ingredients'
+import products from './products'
 import Description from './description'
 import cn from 'classnames'
 import { useRouteMatch, useParams, useHistory } from 'react-router-dom'
@@ -45,10 +45,10 @@ const SingleCard = ({ loadItem, updateOrders }) => {
     tags,
     cooking_time,
     name,
-    ingredients,
+    products,
     text,
-    is_favorited,
-    is_in_shopping_cart
+    is_likedrecipe,
+    is_in_grocerylist
   } = recipe
   
   return <Main>
@@ -66,10 +66,10 @@ const SingleCard = ({ loadItem, updateOrders }) => {
               {authContext && <Button
                 modifier='style_none'
                 clickHandler={_ => {
-                  handleLike({ id, toLike: Number(!is_favorited) })
+                  handleLike({ id, toLike: Number(!is_likedrecipe) })
                 }}
               >
-                {is_favorited ? <Icons.StarBigActiveIcon /> : <Icons.StarBigIcon />}
+                {is_likedrecipe ? <Icons.StarBigActiveIcon /> : <Icons.StarBigIcon />}
               </Button>}
           </div>
           <TagsContainer tags={tags} />
@@ -93,13 +93,13 @@ const SingleCard = ({ loadItem, updateOrders }) => {
           <div className={styles['single-card__buttons']}>
             {authContext && <Button
               className={styles['single-card__button']}
-              modifier={is_in_shopping_cart ? 'style_light' : 'style_dark-blue'}
+              modifier={is_in_grocerylist ? 'style_light' : 'style_dark-blue'}
               clickHandler={_ => {
-                handleAddToCart({ id, toAdd: Number(!is_in_shopping_cart), callback: updateOrders })
+                handleAddToCart({ id, toAdd: Number(!is_in_grocerylist), callback: updateOrders })
               }}
             >
               
-            {is_in_shopping_cart ? <><Icons.DoneIcon color="#4A61DD"/>Рецепт добавлен</> : <><Icons.PlusIcon /> Добавить в покупки</>}
+            {is_in_grocerylist ? <><Icons.DoneIcon color="#4A61DD"/>Рецепт добавлен</> : <><Icons.PlusIcon /> Добавить в покупки</>}
             </Button>}
             {(userContext || {}).id !== author.id && authContext && <Button
               className={styles['single-card__button']}
@@ -111,7 +111,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
               {author.is_subscribed ? 'Отписаться от автора' : 'Подписаться на автора'}
             </Button>}
           </div>
-          <Ingredients ingredients={ingredients} />
+          <products products={products} />
           <Description description={text} />
         </div>
     </div>

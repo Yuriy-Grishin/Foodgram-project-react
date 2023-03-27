@@ -1,29 +1,19 @@
 from django.contrib import admin
-from django.urls import reverse
-from django.utils.html import format_html
+
+from users.models import User, Subscriptions
 
 
+admin.site.register(User)
 class UserAdmin(admin.ModelAdmin):
-    readonly_fields = ('shopping_cart',)
-    list_display = (
-        "id",
-        "username",
-        "first_name",
-        "last_name",
-        "email",
-        "shopping_cart"
+    list_display = ('pk',
+        'username', 'email', 'password', 'first_name', 'last_name',
     )
-    list_filter = ("first_name", "email")
-
-    def shopping_cart(self, obj):
-        return format_html(
-            '<a href="{}">Download file</a>',
-            reverse('shopping_cart', args=[obj.pk, ])
-        )
+    list_filter = ('username', 'email')
+    search_fields = ('username', 'email')
+    empty_value_display = '-нет данных-'
 
 
-class SubscriberAdmin(admin.ModelAdmin):
-    list_display = (
-        "user",
-        "author"
-    )
+admin.site.register(Subscriptions)
+class SubscriptionsAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'user', 'author')
+    empty_value_display = '-нет данных-'
