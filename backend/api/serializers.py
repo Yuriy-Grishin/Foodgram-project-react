@@ -146,58 +146,57 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            "name",
-            "image",
-            "text",
-            "products",
-            "tags",
-            "cooking_time",
-            "author"
+            'name',
+            'image',
+            'text',
+            'products',
+            'tags',
+            'cooking_time',
+            'author'
         )
 
     def __str__(self):
         return self.name
 
     def create(self, info):
-        tags = info.pop("tags")
-        info_products = info.pop("products")
+        tags = info.pop('tags')
+        info_products = info.pop('products')
         recipe = Recipe.objects.create(
-            name=info.pop("name"),
-            author=self.context.get("request").user,
-            text=info.pop("text"),
-            cooking_time=info.pop("cooking_time"),
-            image=info.pop("image")
+            name=info.pop('name'),
+            author=self.context.get('request').user,
+            text=info.pop('text'),
+            cooking_time=info.pop('cooking_time'),
+            image=info.pop('image')
         )
         recipe.tags.set(tags)
         for product in info_products:
-            product_instance = product["id"]
-            amount = product["amount"]
+            product_instance = product['id']
+            amount = product['amount']
             RecipeProduct.objects.create(
                 recipe=recipe, product=product_instance, amount=amount
             )
         return recipe
-
     
     def update(self, data, info):
-        data.name = info.get("name", data.name)
-        data.image = info.get("image", data.image)
-        data.text = info.get("text", data.text)
+        data.name = info.get('name', data.name)
+        data.image = info.get('image', data.image)
+        data.text = info.get('text', data.text)
         data.cooking_time = info.get(
             "cooking_time", data.cooking_time
         )
 
-        tags = info.get("tags")
+        tags = info.get('tags')
         if tags is not None:
             data.tags.clear()
             for tag in tags:
                 data.tags.add(tag)
 
-        products = info.get("products")
-        if products is not None:docker login -u yuriygrishin
+        products = info.get('products')
+        if products is not None:
             RecipeProduct.objects.filter(recipe=data).all().delete()
             for product in products:
-                product_id = product["id"]
-                amount = product["amount"]
+                product_id = product['id']
+                amount = product['amount']
                 RecipeProduct.objects.create(
                     recipe=data, product=product_id, amount=amount
                 )

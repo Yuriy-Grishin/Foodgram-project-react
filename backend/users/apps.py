@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class UsersConfig(AppConfig):
-    name = 'users'
-    verbose_name = 'Авторы блюд'
+    name = "users"
+    verbose_name = "Авторы блюд"

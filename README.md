@@ -1,5 +1,5 @@
 ## FOODGRAM
-Ссылка на сервис: 51.250.10.202/signup
+Ссылка на сервис: 51.250.67.176/signup
 Данные для тестирования возможностей сервиса: электронный адрес: yuyu@mail.ru, пароль: yuyu1234
 Не окончательная версия!
 ## Возможности сервиса
@@ -24,7 +24,7 @@ docker-compose exec -T backend python manage.py makemigrations
 docker-compose exec -T backend python manage.py migrate
 docker-compose exec -T backend python manage.py collectstatic --no-input
 docker-compose exec web python manage.py createsuperuser
-Введи в браузере: 51.250.10.202/signup
+Введи в браузере: 51.250.67.176/signup
 
 ## В работе использовались:
 Python
@@ -33,4 +33,4 @@ DRF
 Docker
 Postgres
 Nginx
-
+cd 

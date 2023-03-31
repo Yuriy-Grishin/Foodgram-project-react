@@ -6,52 +6,83 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('recipes', '0001_initial'),
+        ("recipes", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='recipe',
-            name='author',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='recipes', to=settings.AUTH_USER_MODEL, verbose_name='Автор блюда'),
+            model_name="recipe",
+            name="author",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="recipes",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Автор блюда",
+            ),
         ),
         migrations.AddField(
-            model_name='recipe',
-            name='products',
-            field=models.ManyToManyField(through='recipes.RecipeProduct', to='recipes.Product', verbose_name='Продукты'),
+            model_name="recipe",
+            name="products",
+            field=models.ManyToManyField(
+                through="recipes.RecipeProduct",
+                to="recipes.Product",
+                verbose_name="Продукты",
+            ),
         ),
         migrations.AddField(
-            model_name='recipe',
-            name='tags',
-            field=models.ManyToManyField(to='recipes.Tag', verbose_name='Теги'),
+            model_name="recipe",
+            name="tags",
+            field=models.ManyToManyField(to="recipes.Tag", verbose_name="Теги"),
         ),
         migrations.AddField(
-            model_name='likedrecipe',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='likedrecipe', to='recipes.recipe', verbose_name='Рецепты'),
+            model_name="likedrecipe",
+            name="recipe",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="likedrecipe",
+                to="recipes.recipe",
+                verbose_name="Рецепты",
+            ),
         ),
         migrations.AddField(
-            model_name='likedrecipe',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='likedrecipe', to=settings.AUTH_USER_MODEL, verbose_name='Пользователь'),
+            model_name="likedrecipe",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="likedrecipe",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Пользователь",
+            ),
         ),
         migrations.AddField(
-            model_name='grocerylist',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='grocerylist_recipe', to='recipes.recipe', verbose_name='В списке покупок'),
+            model_name="grocerylist",
+            name="recipe",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="grocerylist_recipe",
+                to="recipes.recipe",
+                verbose_name="В списке покупок",
+            ),
         ),
         migrations.AddField(
-            model_name='grocerylist',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='grocerylist_user', to=settings.AUTH_USER_MODEL, verbose_name='В списке'),
+            model_name="grocerylist",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="grocerylist_user",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="В списке",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='recipeproduct',
-            constraint=models.UniqueConstraint(fields=('recipe', 'product'), name='unique'),
+            model_name="recipeproduct",
+            constraint=models.UniqueConstraint(
+                fields=("recipe", "product"), name="unique"
+            ),
         ),
     ]
