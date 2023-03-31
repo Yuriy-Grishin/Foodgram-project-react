@@ -4,7 +4,7 @@ from django.db import models
 
 class User(AbstractUser):
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username','first_name','last_name']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
     username = models.CharField(max_length=40, unique=True)
     first_name = models.CharField(max_length=40)
     last_name = models.CharField(max_length=40)
@@ -34,7 +34,7 @@ class Subscriptions(models.Model):
     )
 
     class Meta:
-        ordering = ['user']
+        ordering = ['-author_id']
         verbose_name = 'Подписка на автора блюда'
         verbose_name_plural = 'Подписки на авторов блюд'
 

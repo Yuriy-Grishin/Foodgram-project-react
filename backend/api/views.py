@@ -20,7 +20,10 @@ from api.filters import ProductFilter
 from .pagination import LimitPagination
 from .filters import RecipeFilter
 from .permissions import IsAuthorOrReadOnly
-from .serializers import UsersListSerializer, CreateUserSerializer, ProductSerializer, SubscriptionsListSerializer, LikedRecipeSerializer, RecipeListSerializer, TagSerializer, ProductRecipeSerializer, RecipeDetailsSerializer, RecipeCreateSerializer
+from .serializers import (UsersListSerializer, CreateUserSerializer,
+                          ProductSerializer, SubscriptionsListSerializer,
+                          RecipeListSerializer, TagSerializer,
+                          RecipeDetailsSerializer, RecipeCreateSerializer)
 
 
 class UsersListViewSet(UserViewSet):
@@ -36,7 +39,7 @@ class UsersListViewSet(UserViewSet):
             self.permission_classes = (IsAuthenticated,)
         return super().get_permissions()
 
-    """Определяем новый маршрут по подписке на автора с разрешенными методами для вьюсета с помощью декоратора action. Работа с конкретной записью"""
+    """Маршрут по подписке на автора для вьюсета с помощью декоратора action"""
     @action(methods=['POST', 'DELETE'],
             detail=True, )
     def subscribe(self, request, id):
@@ -46,9 +49,10 @@ class UsersListViewSet(UserViewSet):
 
         if request.method == 'POST':
             if subscription.exists():
-                return Response({'error': 'Проверьте подписки! Этот автор уже в ваших подписках!'},
+                return Response({'error': 'Автор уже в подписках!'},
                                 status=status.HTTP_409_CONFLICT)
-            serializer = SubscriptionsListSerializer(author, context={'request': request})
+            serializer = SubscriptionsListSerializer(author,
+                                                     context={'request': request})
             Subscriptions.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -57,7 +61,7 @@ class UsersListViewSet(UserViewSet):
                 subscription.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             
-    """Определяем новый маршрут по подпискам с разрешенными методами для вьюсета с помощью декоратора action. Общий запрос без конкретной записи"""
+    """Маршрут по подпискам для вьюсета с помощью декоратора action"""
     @action(detail=False, permission_classes=[IsAuthenticated])
 
     def subscriptions(self, request):
@@ -86,7 +90,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
-    """Создаем продукты. Убираем паджинатор для корректной работы. Ищем параметр по началу ^"""
+    """Создаем продукты. Убираем паджинатор для корректной работы"""
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     search_fields = ('^name', )
@@ -97,7 +101,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet):
-    """Создаем рецепты. Убираем паджинатор для корректной работы. Ищем параметр по началу ^"""
+    """Создаем рецепты. Убираем паджинатор для корректной работы"""
     queryset = Recipe.objects.all()
     permission_classes = [IsAuthorOrReadOnly]
     pagination_class = LimitPagination
@@ -126,9 +130,9 @@ class RecipeViewSet(ModelViewSet):
         )
         return Response(serializer.data)
 
-    """Определяем новый маршрут по созданию/удалению рецепта с разрешенными методами для вьюсета с помощью декоратора action"""
+    """Маршрут по созданию/удалению рецепта с декоратором action"""
     
-    def makingrecipe(self, user, recipe_id, model):
+    def making_recipe(self, user, recipe_id, model):
         try:
             obj, created = model.objects.get_or_create(user=user, recipe_id=recipe_id)
         except ValidationError:
@@ -137,29 +141,23 @@ class RecipeViewSet(ModelViewSet):
         serializer = RecipeListSerializer(instance=serializer_obj)
         return Response(data=serializer.data)
 
-    def deletingrecipe(self, user, recipe_id, model):
-        model.objects.get(user, recipe_id).delete()
+    def deleting_recipe(self, user, recipe_id, model):
+        model.objects.filter(user, recipe_id).delete()
         return Response()
+    
 
-    """Определяем новый маршрут по созданию/удалению списка продуктов с разрешенными методами для вьюсета с помощью декоратора action. Работа с конкретной записью"""
+    """Маршрут по созданию/удалению списка продуктов с декоратором action"""
     @action(
         detail=True,
         methods=['POST', 'DELETE'],
         permission_classes=[IsAuthenticated]
-    )    
+    ) 
+
     def grocerylist(self, request, pk):
         if request.method == 'POST':
-            try:
-                GroceryList.objects.get(recipe_id=pk, user=request.user)
-                return Response(data='Возникла ошибка')
-            except Exception:
-                return self.makingrecipe(user=request.user, recipe_id=pk, model=GroceryList)
-        try:
-            return self.deletingrecipe(user=request.user, recipe_id=pk, model=GroceryList)
-        except ValidationError:
-            print('Возникла ошибка')
+            return self.making_recipe(user=request.user, recipe_id=pk, model=GroceryList)
 
-    """Определяем новый маршрут по созданию/удалению из избранного с разрешенными методами для вьюсета с помощью декоратора action. Работа с конкретной записью"""
+    """Новый маршрут по созданию/удалению из избранного с помощью декоратора action"""
     @action(
         detail=True,
         methods=['POST', 'DELETE'],
@@ -177,13 +175,14 @@ class RecipeViewSet(ModelViewSet):
         serializer = RecipeListSerializer(recipe)
         return Response(serializer.data)
 
+
     def unlike(self, model, user, pk):
         obj = model.objects.filter(user=user, recipe__id=pk)
         if obj.exists():
             obj.delete()
             return Response()
                  
-    """Определяем новый маршрут по выгрузке продуктов в список с разрешенными методами для вьюсета с помощью декоратора action. Общий запрос без конкретной записи"""
+    """Маршрут по выгрузке продуктов в список с декоратором action"""
     @action(detail=False, methods=['GET'], permission_classes=(IsAuthenticated,))
     def download_grocerylist(self, request, **kwargs):
         """Выгружаем список продуктов для рецепта в формате txt"""
@@ -200,8 +199,8 @@ class RecipeViewSet(ModelViewSet):
         """Используем строковый метод format для вывода в каком хотим формате"""
         file = HttpResponse('Cписок покупок:\n\n\n\n' + ','.join(productstobuy),
                             content_type='text/plain')
-        """Дсв елаем отступы. Методом join объяединяем список в строки. Простой текст"""
+        """Дсв елаем отступы. Методом join объяединяем список в строки"""
         file['Content-Disposition'] = (f'attachment; filename={GROCERYLIST}')
-        """Устанавливаем заголовок Content-Disposition чтобы сервер отработал ответ как вложенный файл. Определяем местонахождение файла"""
+        """Content-Disposition чтобы сервер отработал ответ как вложенный файл"""
         return file
     

@@ -14,6 +14,10 @@ MEDIA_URL = "/media_backend/"
 
 MEDIA_ROOT = "/app/backend_media/"
 
+STATIC_URL = "/static_backend/"
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR), "static"]
+
 SECRET_KEY = os.getenv('SECRET_KEY', default='secret_key')
 
 DEBUG = True
@@ -120,11 +124,8 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = "/static_backend/"
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR), "static"]
 
 AUTH_USER_MODEL = "users.User"
 
