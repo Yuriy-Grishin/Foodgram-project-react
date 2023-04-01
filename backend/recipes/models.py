@@ -48,7 +48,7 @@ class Recipe(models.Model):
     )
     image = models.ImageField(
         "Картинка",
-        upload_to="recipes/",
+        upload_to='recipes/images/',
     )
     pub_date = models.DateTimeField("Дата публикации блюда", auto_now_add=True)
     author = models.ForeignKey(
@@ -77,13 +77,13 @@ class Recipe(models.Model):
 
 class RecipeProduct(models.Model):
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name="recipes", verbose_name="Блюда"
+        Recipe, on_delete=models.CASCADE, related_name='recipes', verbose_name="Блюда"
     )
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
-        related_name="products",
-        verbose_name="Продукт",
+        related_name='products',
+        verbose_name='Продукт',
     )
     amount = models.PositiveIntegerField(
         ("Количество"),
@@ -136,20 +136,21 @@ class GroceryList(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="grocerylist_user",
-        verbose_name="В списке",
+        related_name='grocerylist_user',
+        verbose_name='В списке',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="grocerylist_recipe",
-        verbose_name="В списке покупок",
+        related_name='grocerylist_recipe',
+        verbose_name='В списке покупок',
     )
 
     class Meta:
-        ordering = ["-recipe"]
-        verbose_name = "Список покупок"
-        verbose_name_plural = "Список покупок"
+        ordering = ['-recipe']
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Список покупок'
 
     def __str__(self):
-        return "Список покупок"
+        return 'Список покупок'
+        

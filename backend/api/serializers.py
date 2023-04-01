@@ -2,8 +2,8 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from djoser.serializers import UserSerializer
-from drf_base64.fields import Base64ImageField
 
+from .utils.base64 import Base64ImageField
 from recipes.models import (LikedRecipe, Product, Recipe, RecipeProduct, GroceryList, Tag)
 from users.models import Subscriptions, User
 
@@ -117,7 +117,7 @@ class RecipeDetailsSerializer(serializers.ModelSerializer):
         many=True, read_only=True, source='recipes')
     liked = serializers.SerializerMethodField(read_only=True)
     in_grocerylist = serializers.SerializerMethodField()
-    image = Base64ImageField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -127,6 +127,9 @@ class RecipeDetailsSerializer(serializers.ModelSerializer):
                   'name', 'image',
                   'text', 'cooking_time']
  
+    def get_image(self, obj):
+        return obj.image.url
+
     def get_liked(self, object):
         user = self.context.get('request').user
         return LikedRecipe.objects.filter(user=user).exists()
@@ -141,7 +144,10 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     products = ProductRecipeSerializer(many=True)
     author = UsersListSerializer(read_only=True)
     tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
-    image = Base64ImageField()
+    image = Base64ImageField(
+        max_length=None,
+        use_url=True,
+    )
 
     class Meta:
         model = Recipe

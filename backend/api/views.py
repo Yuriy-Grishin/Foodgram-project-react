@@ -149,25 +149,34 @@ class RecipeViewSet(ModelViewSet):
 
     """Маршрут по созданию/удалению рецепта с декоратором action"""
 
-    def making_recipe(self, user, recipe_id, model):
-        serializer_obj = Recipe.objects.get(pk=recipe_id)
-        serializer = RecipeListSerializer(instance=serializer_obj)
-        return Response(data=serializer.data)
-    
-    def deleting_recipe(self, user, recipe_id, model):
-        model.objects.filter(user, recipe_id).delete()
-        return Response()
+    def making_recipe(self, user, recipe_id, model): 
 
-    """Маршрут по созданию/удалению списка продуктов с декоратором action"""
+        obj, created = model.objects.get_or_create(user=user, recipe_id=recipe_id)
+        serializer_obj = Recipe.objects.get(pk=recipe_id) 
+        serializer = RecipeListSerializer(instance=serializer_obj) 
+        return Response(data=serializer.data) 
 
-    @action(
-        detail=True, methods=["POST", "DELETE"], permission_classes=[IsAuthenticated]
-    )
-    def grocerylist(self, request, pk):
-        if request.method == "POST":
-            return self.making_recipe(
-                user=request.user, recipe_id=pk, model=GroceryList
-            )
+ 
+    def deleting_recipe(self, user, recipe_id, model): 
+        model.objects.get(user, recipe_id).delete() 
+        return Response() 
+
+
+    """Определяем новый маршрут по созданию/удалению списка продуктов с разрешенными методами для вьюсета с помощью декоратора action. Работа с конкретной записью""" 
+
+    @action( 
+
+        detail=True, 
+        methods=['POST', 'DELETE'], 
+        permission_classes=[IsAuthenticated] 
+    )     
+
+    def grocerylist(self, request, pk): 
+        if request.method == 'POST': 
+            return self.making_recipe(user=request.user, recipe_id=pk, model=GroceryList) 
+        if request.method == 'DELETE': 
+            return self.deleting_recipe(user=request.user, recipe_id=pk, model=GroceryList) 
+
 
     """Новый маршрут по созданию/удалению из избранного с помощью декоратора action"""
 
@@ -196,24 +205,20 @@ class RecipeViewSet(ModelViewSet):
 
     @action(detail=False, methods=["GET"], permission_classes=(IsAuthenticated,))
     def download_grocerylist(self, request, **kwargs):
-        """Выгружаем список продуктов для рецепта в формате txt"""
         products = (
             RecipeProduct.objects.filter(recipe__grocerylist_recipe__user=request.user)
-            .values("product")
-            .annotate(allproducts=Sum("amount"))
-            .values_list("product__name", "allproducts", "product__measurement_unit")
+            .values('product')
+            .annotate(allproducts=Sum('amount'))
+            .values_list('product__name', 'allproducts', 'product__measurement_unit')
         )
         productstobuy = []
         [
             productstobuy.append("{}**********{}**********{}.".format(*product))
             for product in products
         ]
-        """Используем строковый метод format для вывода в каком хотим формате"""
         file = HttpResponse(
             "Cписок покупок:\n\n\n\n" + ",".join(productstobuy),
             content_type="text/plain",
         )
-        """Дсв елаем отступы. Методом join объяединяем список в строки"""
         file["Content-Disposition"] = f"attachment; filename={GROCERYLIST}"
-        """Content-Disposition чтобы сервер отработал ответ как вложенный файл"""
         return file

@@ -8,15 +8,13 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_ROOT = "/app/backend_static"
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-MEDIA_URL = "/media_backend/"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIA_ROOT = "/app/backend_media/"
-
-STATIC_URL = "/static_backend/"
-
-STATICFILES_DIRS = [os.path.join(BASE_DIR), "static"]
+#STATICFILES_DIRS = [os.path.join(BASE_DIR), "static"]
 
 SECRET_KEY = os.getenv("SECRET_KEY", default="secret_key")
 
