@@ -149,34 +149,30 @@ class RecipeViewSet(ModelViewSet):
 
     """Маршрут по созданию/удалению рецепта с декоратором action"""
 
-    def making_recipe(self, user, recipe_id, model): 
-
+    def making_recipe(self, user, recipe_id, model):
         obj, created = model.objects.get_or_create(user=user, recipe_id=recipe_id)
-        serializer_obj = Recipe.objects.get(pk=recipe_id) 
-        serializer = RecipeListSerializer(instance=serializer_obj) 
-        return Response(data=serializer.data) 
+        serializer_obj = Recipe.objects.get(pk=recipe_id)
+        serializer = RecipeListSerializer(instance=serializer_obj)
+        return Response(data=serializer.data)
 
- 
-    def deleting_recipe(self, user, recipe_id, model): 
-        model.objects.get(user, recipe_id).delete() 
-        return Response() 
+    def deleting_recipe(self, user, recipe_id, model):
+        model.objects.get(user, recipe_id).delete()
+        return Response()
 
+    """Определяем новый маршрут по созданию/удалению списка продуктов с разрешенными методами для вьюсета с помощью декоратора action. Работа с конкретной записью"""
 
-    """Определяем новый маршрут по созданию/удалению списка продуктов с разрешенными методами для вьюсета с помощью декоратора action. Работа с конкретной записью""" 
-
-    @action( 
-
-        detail=True, 
-        methods=['POST', 'DELETE'], 
-        permission_classes=[IsAuthenticated] 
-    )     
-
-    def grocerylist(self, request, pk): 
-        if request.method == 'POST': 
-            return self.making_recipe(user=request.user, recipe_id=pk, model=GroceryList) 
-        if request.method == 'DELETE': 
-            return self.deleting_recipe(user=request.user, recipe_id=pk, model=GroceryList) 
-
+    @action(
+        detail=True, methods=["POST", "DELETE"], permission_classes=[IsAuthenticated]
+    )
+    def grocerylist(self, request, pk):
+        if request.method == "POST":
+            return self.making_recipe(
+                user=request.user, recipe_id=pk, model=GroceryList
+            )
+        if request.method == "DELETE":
+            return self.deleting_recipe(
+                user=request.user, recipe_id=pk, model=GroceryList
+            )
 
     """Новый маршрут по созданию/удалению из избранного с помощью декоратора action"""
 
@@ -207,9 +203,9 @@ class RecipeViewSet(ModelViewSet):
     def download_grocerylist(self, request, **kwargs):
         products = (
             RecipeProduct.objects.filter(recipe__grocerylist_recipe__user=request.user)
-            .values('product')
-            .annotate(allproducts=Sum('amount'))
-            .values_list('product__name', 'allproducts', 'product__measurement_unit')
+            .values("product")
+            .annotate(allproducts=Sum("amount"))
+            .values_list("product__name", "allproducts", "product__measurement_unit")
         )
         productstobuy = []
         [
