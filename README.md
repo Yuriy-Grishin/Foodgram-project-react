@@ -8,7 +8,7 @@ FOODGRAM представляет собой платформу для люде�
 ### Как запустить?
 
 Копируем репозиторий:
-git clone https://github.com/Yuriy-Grishin/foodgram-project-react.git
+git clone https://github.com/Yuriy-Grishin/Foodgram-project-react.git
 Cоздаем виртуальное окружение:
 python -m venv env
 source venv/bin/activate
