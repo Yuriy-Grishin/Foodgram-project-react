@@ -14,24 +14,24 @@ FOODGRAM представляет собой платформу для люде�
 
 ### Как запустить?
 
-Копируем репозиторий:
+1. Копируем репозиторий:
 git clone https://github.com/Yuriy-Grishin/Foodgram-project-react.git
-Cоздаем виртуальное окружение:
+2. Cоздаем виртуальное окружение:
 python -m venv env
 source venv/bin/activate
-Устанавливаем зависимость с requirements.txt:
+3. Устанавливаем зависимость с requirements.txt:
 pip install -r requirements.txt
-Переходим в папку проектв: cd backend
+4.Переходим в папку проектв: cd backend. 
 Создаем файл .env со следующим содержанием:
 SECRET_KEY = SECRET_KEY; DB_ENGINE=django.db.backends.postgresql; DB_NAME=postgres POSTGRES_USER=postgres; POSTGRES_PASSWORD=postgres; DB_HOST=db; DB_PORT=5432
-Создаем образ: docker build -t yuriygrishin/foodgram-backend:latest .
-Перейти в папку infra: cd infra и запускаем команду docker-compose up
-Сделай миграции, статику, суперпользователя:
+5. Создаем образ: docker build -t yuriygrishin/foodgram-backend:latest .
+6. Переходим в папку infra: cd infra и запускаем команду docker-compose up
+7. Сделаем миграции, статику, суперпользователя:
 docker-compose exec -T backend python manage.py makemigrations
 docker-compose exec -T backend python manage.py migrate
 docker-compose exec -T backend python manage.py collectstatic --no-input
 docker-compose exec web python manage.py createsuperuser
-Введи в браузере: 51.250.67.176/signup
+8. Вводим в браузере: 51.250.67.176/signup
 
 ## В работе использовались:
 Python
